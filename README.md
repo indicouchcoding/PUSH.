@@ -2,7 +2,7 @@
 Every session starts with a push.
 
 PUSH. is a community-driven fork of ReSkate, focused on open collaboration, extensibility, and giving skaters and creators a voice in the project's direction. Play offline, host lobbies or dedicated servers, and customize your experience with mods.
-Project status: Day One source baseline. The complete native ReSkate feature set has been imported, public application targets and local data have been renamed, the UI palette and launcher identity have been changed, and ReSkate-owned telemetry and moderation services are disabled. In-game testing and a signed public release remain separate release gates.
+Project status: PUSH. recognizes Steam build 25617022 and starts its address-independent graphics overlay in compatibility mode. Native gameplay hooks remain disabled until their contracts are reviewed against the new executable. In-game testing and a signed public release remain separate release gates.
 
 Independent fan project: PUSH. is not affiliated with or endorsed by Electronic Arts, Full Circle, or the ReSkate maintainers. You need your own copy of skate. on Steam.
 

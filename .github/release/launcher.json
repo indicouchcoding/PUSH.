@@ -15,9 +15,9 @@
   "game": {
     "app_id": 3354750,
     "depot_id": 3354751,
-    "manifest_id": "4621099302092747785",
-    "build_id": "25414733",
-    "skate_sha256": "fbce74d5e28ef525dbba2cb4adbebc13405bdbd88f31bc940bca45e4ae88b8f9"
+    "manifest_id": "4187479023593343011",
+    "build_id": "25617022",
+    "skate_sha256": "915522645e3b151a641743f52b6c7437e75b6d1381d8420edaa83493b025c4b2"
   },
   "depot_downloader": {
     "version": "3.4.0",

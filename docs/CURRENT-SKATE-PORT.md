@@ -22,6 +22,11 @@ The machine-readable record is
 
 ## Port status
 
+The launcher and runtime accept the target above by exact file hash and PE
+identity. PUSH. starts its DX12 overlay without installing any address-based
+gameplay hooks from the previous executable. This is the safe runnable baseline
+for completing the native port feature by feature.
+
 The first reproducible native-contract audit validates all 236 fingerprints
 against the old supported image, then searches the new image without executing
 either game binary.

@@ -395,13 +395,16 @@ std::uintptr_t validate_child_image(HANDLE process, const fs::path& game) {
         nt.OptionalHeader.SizeOfImage != dingosdk::launcher::expected_game_image_size)
         throw std::runtime_error("Created process has the wrong loaded image identity");
 
-    // The same code fingerprints PUSH.dll checks before it initializes.
-    namespace image = dingosdk::addr::runtime;
-    if (!remote_matches(process, base + image::client_tick, image::client_tick_prefix))
-        throw std::runtime_error("Created process failed the loaded-image fingerprint");
-    for (const auto& check : image::image_checks)
-        if (!remote_matches(process, base + check.rva, check.bytes))
+    if constexpr (dingosdk::supported_build::native_contracts_complete) {
+        // Native contracts add instruction fingerprints once every address used
+        // by the runtime has been reviewed for this exact build.
+        namespace image = dingosdk::addr::runtime;
+        if (!remote_matches(process, base + image::client_tick, image::client_tick_prefix))
             throw std::runtime_error("Created process failed the loaded-image fingerprint");
+        for (const auto& check : image::image_checks)
+            if (!remote_matches(process, base + check.rva, check.bytes))
+                throw std::runtime_error("Created process failed the loaded-image fingerprint");
+    }
     return base;
 }
 
@@ -789,32 +792,40 @@ DWORD start_game(const Session& session, const launcher::LaunchOptions& options,
     }
     // Catalogues (item names, challenges, entitlements) are read from the live
     // game's content cache for this build, installed once into Local AppData.
-    const auto cache = content_cache::ensure_installed();
-    using CacheStatus = content_cache::InstallStatus;
-    if (cache.status == CacheStatus::installed) {
-        logging::write(logging::Level::info, logging::Channel::assets, "Game content cache ready.");
-    } else if (cache.status == CacheStatus::downloaded) {
-        logging::write(logging::Level::info, logging::Channel::assets, "Game content cache downloaded and installed.");
+    if constexpr (supported_build::content_cache_available) {
+        const auto cache = content_cache::ensure_installed();
+        using CacheStatus = content_cache::InstallStatus;
+        if (cache.status == CacheStatus::installed) {
+            logging::write(logging::Level::info, logging::Channel::assets, "Game content cache ready.");
+        } else if (cache.status == CacheStatus::downloaded) {
+            logging::write(logging::Level::info, logging::Channel::assets, "Game content cache downloaded and installed.");
+        } else {
+            logging::log(logging::Level::error, logging::Channel::assets,
+                "Game content cache {} (HTTP {}; Windows error {}).",
+                cache.status == CacheStatus::busy ? "is being installed by another launcher" : "could not be installed",
+                cache.http_status, cache.error);
+            throw std::runtime_error(cache.status == CacheStatus::busy ?
+                "Another PUSH. launcher is installing the game content cache. Try again when it finishes." :
+                "PUSH. needs to download the game content cache once. Check your internet connection and try again.");
+        }
     } else {
-        logging::log(logging::Level::error, logging::Channel::assets,
-            "Game content cache {} (HTTP {}; Windows error {}).",
-            cache.status == CacheStatus::busy ? "is being installed by another launcher" : "could not be installed",
-            cache.http_status, cache.error);
-        throw std::runtime_error(cache.status == CacheStatus::busy ?
-            "Another PUSH. launcher is installing the game content cache. Try again when it finishes." :
-            "PUSH. needs to download the game content cache once. Check your internet connection and try again.");
+        logging::write(logging::Level::info, logging::Channel::assets,
+            "The current-build content cache is not published; continuing in graphics compatibility mode.");
     }
     // World layers are read from the level data; the first launch of a build
     // scans it here so the game does not wait on it. The runtime rescans if
     // this cache is missing, so a failure is not fatal.
-    try {
-        const auto layers = world_layer_scan::load_or_scan(paths.directory, world_layer_scan::cache_file());
-        logging::log(logging::Level::info, logging::Channel::world, "World layers ready: {} layers.", layers.layers.size());
-    } catch (const std::exception& error) {
-        logging::log(logging::Level::warning, logging::Channel::world, "World layers could not be read: {}", error.what());
+    if constexpr (supported_build::native_contracts_complete) {
+        try {
+            const auto layers = world_layer_scan::load_or_scan(paths.directory, world_layer_scan::cache_file());
+            logging::log(logging::Level::info, logging::Channel::world, "World layers ready: {} layers.", layers.layers.size());
+        } catch (const std::exception& error) {
+            logging::log(logging::Level::warning, logging::Channel::world, "World layers could not be read: {}", error.what());
+        }
     }
     configure_environment(paths.logs);
-    bool loose_files = options.loose_files && initfs::loose_files_preference(paths.directory);
+    bool loose_files = supported_build::native_contracts_complete && options.loose_files &&
+        initfs::loose_files_preference(paths.directory);
     if (loose_files) {
         try {
             fs::create_directories(paths.directory / L"scripts" / L"Custom");

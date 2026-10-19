@@ -81,8 +81,10 @@ bool validate_image(std::uintptr_t base) {
     if (!read(base, dos) || dos.e_magic != IMAGE_DOS_SIGNATURE || dos.e_lfanew <= 0 || dos.e_lfanew > 0x100000 ||
         !read(base + dos.e_lfanew, nt) || nt.Signature != IMAGE_NT_SIGNATURE ||
         nt.FileHeader.Machine != IMAGE_FILE_MACHINE_AMD64 || nt.OptionalHeader.SizeOfImage != dingosdk::supported_build::game_image_size) return false;
-    if (!matches(base + rt::client_tick, rt::client_tick_prefix)) return false;
-    for (const auto& entry : rt::image_checks) if (!matches(base + entry.rva, entry.bytes)) return false;
+    if constexpr (dingosdk::supported_build::native_contracts_complete) {
+        if (!matches(base + rt::client_tick, rt::client_tick_prefix)) return false;
+        for (const auto& entry : rt::image_checks) if (!matches(base + entry.rva, entry.bytes)) return false;
+    }
     return true;
 }
 }
@@ -103,30 +105,34 @@ extern "C" __declspec(dllexport) BOOL WINAPI DingoSDKDebugInitialize() {
             dingosdk::logging::write(dingosdk::logging::Level::critical, dingosdk::logging::Channel::runtime, "Game image validation failed.");
             return FALSE;
         }
-        if (const auto& content = dingosdk::content_cache::catalogs(); content.available) {
-            dingosdk::logging::log(dingosdk::logging::Level::info, dingosdk::logging::Channel::assets,
-                "Game content cache: {} items, {} challenges, {} entitlements.",
-                content.items.size(), content.challenges.size(), content.entitlements.size());
-        } else {
-            dingosdk::logging::write(dingosdk::logging::Level::warning, dingosdk::logging::Channel::assets,
-                "Game content cache is not installed: item names, challenges and default entitlements are unavailable. "
-                "Start PUSH. from PUSHLauncher to install it.");
+        if constexpr (dingosdk::supported_build::content_cache_available) {
+            if (const auto& content = dingosdk::content_cache::catalogs(); content.available) {
+                dingosdk::logging::log(dingosdk::logging::Level::info, dingosdk::logging::Channel::assets,
+                    "Game content cache: {} items, {} challenges, {} entitlements.",
+                    content.items.size(), content.challenges.size(), content.entitlements.size());
+            } else {
+                dingosdk::logging::write(dingosdk::logging::Level::warning, dingosdk::logging::Channel::assets,
+                    "Game content cache is not installed: item names, challenges and default entitlements are unavailable. "
+                    "Start PUSH. from PUSHLauncher to install it.");
+            }
         }
         // World layers come from the installed level data. The launcher builds
         // the per-build cache; without it this scans the level TOCs once here.
-        try {
-            std::wstring executable(32768, L'\0');
-            executable.resize(GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size())));
-            const auto started = GetTickCount64();
-            auto layers = dingosdk::world_layer_scan::load_or_scan(
-                std::filesystem::path(executable).parent_path(), dingosdk::world_layer_scan::cache_file());
-            dingosdk::logging::log(dingosdk::logging::Level::info, dingosdk::logging::Channel::world,
-                "World layers: {} layers across {} maps from the level data ({} ms).",
-                layers.layers.size(), layers.anchors.size(), GetTickCount64() - started);
-            dingosdk::install_world_layer_catalog(std::move(layers));
-        } catch (const std::exception& error) {
-            dingosdk::logging::log(dingosdk::logging::Level::warning, dingosdk::logging::Channel::world,
-                "World layers are unavailable: {}", error.what());
+        if constexpr (dingosdk::supported_build::native_contracts_complete) {
+            try {
+                std::wstring executable(32768, L'\0');
+                executable.resize(GetModuleFileNameW(nullptr, executable.data(), static_cast<DWORD>(executable.size())));
+                const auto started = GetTickCount64();
+                auto layers = dingosdk::world_layer_scan::load_or_scan(
+                    std::filesystem::path(executable).parent_path(), dingosdk::world_layer_scan::cache_file());
+                dingosdk::logging::log(dingosdk::logging::Level::info, dingosdk::logging::Channel::world,
+                    "World layers: {} layers across {} maps from the level data ({} ms).",
+                    layers.layers.size(), layers.anchors.size(), GetTickCount64() - started);
+                dingosdk::install_world_layer_catalog(std::move(layers));
+            } catch (const std::exception& error) {
+                dingosdk::logging::log(dingosdk::logging::Level::warning, dingosdk::logging::Channel::world,
+                    "World layers are unavailable: {}", error.what());
+            }
         }
         // The game shows nothing for several seconds yet; the startup window
         // covers that, and goes by itself once the game's window appears. A
@@ -140,8 +146,10 @@ extern "C" __declspec(dllexport) BOOL WINAPI DingoSDKDebugInitialize() {
                 dingosdk::startup::status("Starting Skate\xE2\x80\xA6");
             }
         } startup_window;
-        dingosdk::initialize_client_source_spawn(r.base);
-        if (!dingosdk::runtime::initialize_bootstrap(r.base)) return FALSE;
+        if constexpr (dingosdk::supported_build::native_contracts_complete) {
+            dingosdk::initialize_client_source_spawn(r.base);
+            if (!dingosdk::runtime::initialize_bootstrap(r.base)) return FALSE;
+        }
 
         // Skate imports its graphics factory from the sibling Streamline
         // interposer. Load that ordinary dependency while the game is still
@@ -204,6 +212,21 @@ extern "C" __declspec(dllexport) BOOL WINAPI DingoSDKDebugInitialize() {
         }
         dingosdk::logging::write(dingosdk::logging::Level::info, dingosdk::logging::Channel::graphics,
             "Game graphics provider loaded: sl.interposer.dll.");
+        if constexpr (!dingosdk::supported_build::native_contracts_complete) {
+            if (!DingoSDKOverlayStartV3(nullptr)) {
+                dingosdk::logging::write(dingosdk::logging::Level::error,
+                    dingosdk::logging::Channel::graphics, "Compatibility overlay startup failed.");
+                return FALSE;
+            }
+            r.initialized = true;
+            record("{\"event\":\"debug_initialized\",\"overlay\":true,"
+                "\"native_load\":\"disabled_current_build_compatibility\"}");
+            dingosdk::logging::write(dingosdk::logging::Level::warning,
+                dingosdk::logging::Channel::runtime,
+                "Current Steam build started in graphics compatibility mode; unported native gameplay features are disabled.");
+            startup_window.hand_over();
+            return TRUE;
+        }
         const dingosdk::overlay::CallbacksV3 callbacks{
             nullptr, read_model, queue_load, queue_debug, queue_offline_feature,
             queue_console_command};
