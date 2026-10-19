@@ -2,7 +2,7 @@
 Every session starts with a push.
 
 PUSH. is a community-driven fork of ReSkate, focused on open collaboration, extensibility, and giving skaters and creators a voice in the project's direction. Play offline, host lobbies or dedicated servers, and customize your experience with mods.
-Project status — rebrand in progress: This README describes functionality inherited from ReSkate, not features independently tested or released under PUSH. yet. Executable names, filesystem identifiers, update settings, Steam build pins, Thunderstore category, and existing documentation links below still refer to the upstream implementation until code and infrastructure are migrated. Do not rename binaries manually; rename them in the source/build system first.
+Project status: Day One source baseline. The complete native ReSkate feature set has been imported, public application targets and local data have been renamed, the UI palette and launcher identity have been changed, and ReSkate-owned telemetry and moderation services are disabled. In-game testing and a signed public release remain separate release gates.
 
 Independent fan project: PUSH. is not affiliated with or endorsed by Electronic Arts, Full Circle, or the ReSkate maintainers. You need your own copy of skate. on Steam.
 
@@ -48,10 +48,10 @@ Features
 Getting started (inherited upstream procedure)
 1. For upstream reference only: Download the existing ReSkate-<version>.zip from
    ReSkate releases. This is not a PUSH. release.
-2. Extract ReSkateLauncher.exe and ReSkate.dll into a new, empty folder of their own, for
-   example C:\Games\ReSkate. Do not put them in Steam's skate. folder: PUSH. keeps its own
+2. Extract PUSHLauncher.exe and PUSH.dll into a new, empty folder of their own, for
+   example C:\Games\PUSH. Do not put them in Steam's skate. folder: PUSH. keeps its own
    copy of the game there, so Steam updating skate. cannot break it.
-3. Run ReSkateLauncher.exe.
+3. Run PUSHLauncher.exe.
    - It checks for PUSH. updates, then installs the supported build of the game into that folder
      (about 14 GB of free space).
    - Sign in to Steam when asked, with the account that owns skate. You can scan a QR code with the
@@ -60,11 +60,11 @@ Getting started (inherited upstream procedure)
 4. Press PLAY.
 The inherited ReSkate implementation supports one game build at a time (Steam build 25414733).
 Linux (Proton)
-1. Install skate. with Steam, and put ReSkateLauncher.exe and ReSkate.dll in a new, empty folder
-   of their own, for example ~/Games/ReSkate (not Steam's skate. folder: the launcher refuses to
+1. Install skate. with Steam, and put PUSHLauncher.exe and PUSH.dll in a new, empty folder
+   of their own, for example ~/Games/PUSH (not Steam's skate. folder: the launcher refuses to
    run from there).
 2. In Steam → skate. → Properties → Launch Options, enter this with your own folder's path:
-   bash -c 'exec "${@/*EAAntiCheat.GameServiceLauncher.exe//home/you/Games/ReSkate/ReSkateLauncher.exe}"' -- %command%
+   bash -c 'exec "${@/*EAAntiCheat.GameServiceLauncher.exe//home/you/Games/PUSH/PUSHLauncher.exe}"' -- %command%
 3. Press Play on skate. in your Steam library. The launcher installs its own copy of the game
    into that folder the first time.
 Steam starts EA's anti-cheat launcher (EAAntiCheat.GameServiceLauncher.exe), not Skate.exe, and the
@@ -93,7 +93,7 @@ connection goes on downloading (up to four hours), installs and is applied, and 
 join the server again. Declining, or cancelling the download, stops it and removes the
 incomplete file. Installation stops before replacing an existing mod when cancellation is
 observed; a filesystem commit or live merge already in progress finishes safely rather than
-being forcibly interrupted. Retry after that work has finished, without restarting PUSH..
+being forcibly interrupted. Retry after that work has finished, without restarting PUSH.
 Controls
 Key	Opens
 Insert	the PUSH. menu
@@ -119,10 +119,10 @@ accepts park random from its console or an admin.
 Where things are
 What	Where
 Mods	Mods\<mod name>\ beside Skate.exe, ordered by Mods\mods.json
-Logs	logs\ReSkate.log beside Skate.exe
-Profile (skater, progress, parks)	%LOCALAPPDATA%\ReSkate\profiles\offline\
-The game's own settings and saves	%LOCALAPPDATA%\ReSkate\Game\ (kept apart from the normal game)
-Launcher settings	ReSkateLauncher.settings.json beside the launcher
+Logs	logs\PUSH.log beside Skate.exe
+Profile (skater, progress, parks)	%LOCALAPPDATA%\PUSH\profiles\offline\
+The game's own settings and saves	%LOCALAPPDATA%\PUSH\Game\ (kept apart from the normal game)
+Launcher settings	PUSHLauncher.settings.json beside the launcher
 
 
 Mods
@@ -155,15 +155,15 @@ Mods
 Only install mods you trust. Mods change game data. Custom Lua scripts (scripts/Custom) are
 switched off in this version: nothing in that folder is read or run.
 Dedicated servers
-ReSkateServer.exe is a headless lobby that needs neither the game nor Steam installed. It is in the
-ReSkateServer-<version>.zip of each release. See [README.txt](Server/README.txt) for setup,
-ReSkateServer.json, admin commands, votes and the anti-cheat checks.
+PUSHServer.exe is a headless lobby that needs neither the game nor Steam installed. It is in the
+PUSHServer-<version>.zip of each release. See [README.txt](Server/README.txt) for setup,
+PUSHServer.json, admin commands, votes and the anti-cheat checks.
 Linux servers
-Each release also ships ReSkateServer-Linux-<version>.zip: the same headless lobby as a native
+Each release also ships PUSHServer-Linux-<version>.zip: the same headless lobby as a native
 x86_64 Linux binary (no Wine, no game install). Setup in short:
-unzip ReSkateServer-Linux-<version>.zip -d reskate-server && cd reskate-server
+unzip PUSHServer-Linux-<version>.zip -d push-server && cd push-server
 ./setup-linux-server-libs.sh
-./ReSkateServer            # writes ReSkateServer.json on first run; edit name/admins, restart
+./PUSHServer            # writes PUSHServer.json on first run; edit name/admins, restart
 Details (Steam .so files, world-layers.json, systemd, ports, building from source with
 cmake --preset linux-x64) are in [README-linux.md](Server/README-linux.md).
 Building from source
@@ -179,16 +179,16 @@ cmake --preset vs2022-x64
 cmake --build --preset release --parallel 4
 The files are written to build/vs2022-x64/Release/:
 File	What it is
-ReSkateLauncher.exe	the launcher (also hosts crash reporting)
-ReSkate.dll	the runtime the launcher loads into the game
-ReSkateServer.exe	the dedicated server
-ReSkateEmotePacker.exe	builds the chat emote pack in assets/emotes
+PUSHLauncher.exe	the launcher (also hosts crash reporting)
+PUSH.dll	the runtime the launcher loads into the game
+PUSHServer.exe	the dedicated server
+PUSHEmotePacker.exe	builds the chat emote pack in assets/emotes
 
 
 To work in Visual Studio, open build/vs2022-x64/DingoSDK.sln after configuring and select
 Release | x64.
 Running your build
-Close the game. Copy ReSkateLauncher.exe and ReSkate.dll into your PUSH. folder (the one the
+Close the game. Copy PUSHLauncher.exe and PUSH.dll into your PUSH. folder (the one the
 launcher installed the game into, beside Skate.exe), then run the launcher.
 
 Local builds never replace themselves. They only report that an update exists, so a release can't
@@ -200,7 +200,7 @@ Flag	Effect
 --no-update	skip the update check
 --offline, -offline	play offline, without Steam running
 --windowed, --width=N, --height=N	windowed mode and its size
---log-level=<trace|debug|info|warning|error|critical|off>	how much ReSkate.log records (warn works too)
+--log-level=<trace|debug|info|warning|error|critical|off>	how much PUSH.log records (warn works too)
 --log-trace	the same as --log-level=trace; an explicit --log-level wins
 -wconsole	also show the log live in a console window while the game runs
 --menu-key=0x2D, --console-key=0xC0	menu and console keys (virtual-key codes)
@@ -212,9 +212,9 @@ Flag	Effect
 CMake options
 Option	Default	Effect
 DINGOSDK_VERSION	0.0.0	version stamped into the binaries
-DINGOSDK_LAUNCHER_AUTO_UPDATE	OFF	let the launcher replace itself and ReSkate.dll, and the server replace itself (release builds)
-DINGOSDK_RELEASE_REPO	Dingo-Shenanigans/ReSkate	public GitHub repository whose latest release carries launcher.json and the files it pins
-DINGOSDK_CRASH_REPORT_URL	the project's endpoint	Sentry minidump endpoint URL; empty turns crash uploads off
+DINGOSDK_LAUNCHER_AUTO_UPDATE	OFF	let the launcher replace itself and PUSH.dll, and the server replace itself (release builds)
+DINGOSDK_RELEASE_REPO	indicouchcoding/PUSH.	public GitHub repository whose latest release carries launcher.json and the files it pins
+DINGOSDK_CRASH_REPORT_URL	empty	Sentry minidump endpoint URL; empty turns crash uploads off
 DINGOSDK_TEST_GAME_ROOT	empty	a Skate folder, for the tests that read real game data
 
 
@@ -236,10 +236,10 @@ Engine/Scripting/	custom Lua scripts
 Engine/Game/	the game's native ABI and data models
 Engine/Game/Build/<build>/	every address, fingerprint and patch tied to one Skate.exe build, as addr::<area>::<name>
 Extension/	PUSH.'s features, the in-game UI and diagnostics
-Runtime/	ReSkate.dll: entry point, startup and exports
-Launcher/	ReSkateLauncher.exe
-Server/	ReSkateServer.exe
-EmotePacker/	ReSkateEmotePacker.exe
+Runtime/	PUSH.dll: entry point, startup and exports
+Launcher/	PUSHLauncher.exe
+Server/	PUSHServer.exe
+EmotePacker/	PUSHEmotePacker.exe
 External/	third-party libraries, pinned and hashed (see [README.md](External/README.md))
 assets/, config/	files built into the binaries: launcher art, emotes, default profile settings
 cmake/	the build, split by area
@@ -251,19 +251,14 @@ Engine/Game/Build/<build>/ and in the pins of
 [supported_build.h](Engine/Game/Build/supported_build.h): file hashes, the Steam depot and manifest, and
 the content cache. A new game build means a new table and new pins. Most hooks and patches check the
 bytes they expect before touching them, so code from the wrong build is refused rather than patched.
-Crash reports and privacy (inherited behavior; verify before PUSH. releases)
-In the upstream implementation, when the launcher or game crashes, ReSkate uploads a minidump and that session's log to the
-project's self-hosted Sentry server, so crashes can be fixed. The log never contains your Steam password or
-login name.
+Crash reports and privacy
+PUSH. does not have a crash-reporting endpoint configured. Minidump upload and performance timing upload
+are disabled by default, and local development builds do not send them to ReSkate infrastructure. Logs and
+crash dumps remain on the player's computer for manual bug reports. A future PUSH.-owned reporting service
+must be documented and reviewed before it can be enabled in a release.
 
-With Send performance timings ticked in the launcher's Settings (ADVANCED; off unless you turn it on),
-the upstream implementation also sends how long a few steps took: the update check, the Steam download, mod
-installs (with the package name), the mod merge, starting the game, each level load, joining a multiplayer
-session and fetching the PUSH. lists. Time spent in a level adds its name, average frame rate and count of
-long frames. Nothing about your account is included. Turning crash reports off turns this off too.
-
-To turn crash reports off, untick Send crash reports in the launcher's Settings (ADVANCED), or set the
-environment variable RESKATE_CRASH_REPORTING=0.
+The inherited `RESKATE_CRASH_REPORTING` environment variable is retained as a compatibility switch, but it
+cannot enable uploads while `DINGOSDK_CRASH_REPORT_URL` is empty.
 
 The upstream implementation also keeps the game off EA's online services: the game's own crash reports, telemetry and
 remote configuration requests are turned off and blocked. Fast-travel artwork still comes from EA's

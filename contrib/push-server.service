@@ -1,0 +1,21 @@
+[Unit]
+Description=PUSH. dedicated server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=push-server
+WorkingDirectory=/opt/push-server
+ExecStart=/opt/push-server/PUSHServer
+Restart=always
+RestartSec=5
+# The server updates itself in place (the new version takes over this same process), so
+# its user must be able to write to WorkingDirectory. Any exit still restarts it here.
+# The server already appends every line to PUSHServer.log next to itself;
+# appending stdout there too wrote each line twice. The journal keeps the console copy.
+StandardOutput=journal
+StandardError=inherit
+
+[Install]
+WantedBy=multi-user.target
