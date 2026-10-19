@@ -1,0 +1,34 @@
+/build/
+/SpotifyHelper/target/
+/out/
+/artifacts/
+/logs/
+/.vs/
+/CMakeUserPresets.json
+__pycache__/
+*.log
+*.dll
+*.exe
+*.pdb
+*.ilk
+*.lib
+*.exp
+*.keys
+*.pcap
+*.pcapng
+*.pdml
+*.mitm
+analysis/raw/**/*.ebx
+analysis/raw/**/*.res
+
+# Optional developer utilities stay local. CMake is self-contained.
+/tools/
+/tests/
+
+# Local research is not shipped. Project documentation is tracked.
+/analysis/
+/release
+
+# Drone model sources (assets/models/fpv/CREDITS.md): large; only the prepared drone.glb is kept.
+/assets/models/fpv/dji_avata2.glb
+/assets/models/fpv/fpv_drone.glb
