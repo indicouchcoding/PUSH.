@@ -3,8 +3,8 @@
   "launcher": {
     "version": "0.1.0-alpha.1",
     "url": "asset:PUSHLauncher.exe",
-    "sha256": "f0f4599f28081a6a5e8a037bbbe0cd20ac6a981fedd2b3993bc51cfcabed3d5cf",
-    "size": 6424576
+    "sha256": "0e8edfaee58014bd72a72fcabf511b7df265054c28f2c23dfc7419d2b94cb2ef",
+    "size": 6425088
   },
   "runtime": {
     "version": "0.1.0-alpha.1",

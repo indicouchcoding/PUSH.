@@ -875,13 +875,18 @@ DWORD start_game(const Session& session, const launcher::LaunchOptions& options,
     set_environment(L"RESKATE_MENU_KEY", std::to_wstring(options.menu_key).c_str());
     set_environment(L"RESKATE_CONSOLE_KEY", std::to_wstring(options.console_key).c_str());
     const auto steam_reason = options.offline ? std::wstring{} : launcher_app::steam_offline_reason();
-    const bool offline = options.offline || !steam_reason.empty();
+    // The current-build compatibility path has no native online-session port
+    // yet. Keep it on the same local platform path as ReSkate so the game
+    // cannot wait for an EA session after PUSH has blocked EA services.
+    const bool compatibility_offline = !supported_build::native_contracts_complete;
+    const bool offline = options.offline || compatibility_offline || !steam_reason.empty();
     set_environment(L"RESKATE_OFFLINE", offline ? L"1" : L"0");
     const auto steam_id = offline ? last_steam_id() : std::nullopt;
     set_environment(L"RESKATE_OFFLINE_STEAM_ID", steam_id ? std::to_wstring(*steam_id).c_str() : nullptr);
     if (offline)
-        logging::write(logging::Level::info, logging::Channel::launcher, options.offline ?
-            std::wstring(L"Offline mode: requested; Steam is not used") :
+        logging::write(logging::Level::info, logging::Channel::launcher,
+            options.offline ? std::wstring(L"Offline mode: requested; Steam is not used") :
+            compatibility_offline ? std::wstring(L"Offline mode: current-build compatibility path; local platform fallback enabled") :
             L"Offline mode: Steam is not running or not signed in: " + steam_reason);
     logging::write(logging::Level::info, logging::Channel::launcher, std::wstring(L"Graphics options: DRED=") +
         (options.gpu_diagnostics ? L"enabled" : L"default"));
