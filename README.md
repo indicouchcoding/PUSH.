@@ -251,6 +251,11 @@ Engine/Game/Build/<build>/ and in the pins of
 [supported_build.h](Engine/Game/Build/supported_build.h): file hashes, the Steam depot and manifest, and
 the content cache. A new game build means a new table and new pins. Most hooks and patches check the
 bytes they expect before touching them, so code from the wrong build is refused rather than patched.
+
+PUSH's independent port to the current Steam build is tracked in
+[docs/CURRENT-SKATE-PORT.md](docs/CURRENT-SKATE-PORT.md). The target is recorded
+separately from the active build until every native and asset contract passes
+review and in-game validation.
 Crash reports and privacy
 PUSH. does not have a crash-reporting endpoint configured. Minidump upload and performance timing upload
 are disabled by default, and local development builds do not send them to ReSkate infrastructure. Logs and
