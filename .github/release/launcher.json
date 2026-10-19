@@ -3,14 +3,14 @@
   "launcher": {
     "version": "0.1.0-alpha.1",
     "url": "asset:PUSHLauncher.exe",
-    "sha256": "b9f945d85934c7df2cb99a65b66639b51b7ba78dcb2acd46deeafb8291e6f5fe",
-    "size": 6156288
+    "sha256": "f0f4599f28081a6a5e8a037bbbe0cd20ac6a981fedd2b3993bc51cfcabed3d5cf",
+    "size": 6424576
   },
   "runtime": {
     "version": "0.1.0-alpha.1",
     "url": "asset:PUSH.dll",
-    "sha256": "d930825fcf7508dcc9fd7d0b31c26370ebaf487350f3997a999be05ec793ac70",
-    "size": 16815616
+    "sha256": "78c316eb9edff219a9a6cbfe6a5d363dd2238dbb21fd59fa6f4dd449815664a",
+    "size": 17364992
   },
   "game": {
     "app_id": 3354750,

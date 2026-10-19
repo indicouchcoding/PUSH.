@@ -13,13 +13,13 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName", "Dingo Shenanigans"
+            VALUE "CompanyName", "IndicouchCoding"
             VALUE "FileDescription", "@version_description@"
             VALUE "FileVersion", "@DINGOSDK_VERSION@"
             VALUE "InternalName", "@version_internal_name@"
-            VALUE "LegalCopyright", "Copyright (C) 2026 the ReSkate contributors. Licensed under GPL-3.0."
+            VALUE "LegalCopyright", "Copyright (C) 2026 IndicouchCoding and contributors. Licensed under GPL-3.0."
             VALUE "OriginalFilename", "@version_file_name@"
-            VALUE "ProductName", "ReSkate"
+            VALUE "ProductName", "PUSH."
             VALUE "ProductVersion", "@DINGOSDK_VERSION@"
         END
     END

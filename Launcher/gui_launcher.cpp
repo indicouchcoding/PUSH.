@@ -37,7 +37,7 @@ fs::path settings_path(const launcher_app::Session& session) {
 }
 
 fs::path legacy_settings_path(const launcher_app::Session& session) {
-    return session.self.parent_path() / L"ReSkateLauncher.settings.json";
+    return session.self.parent_path() / L"PUSHLauncher.settings.json";
 }
 
 Settings load_settings(const fs::path& path) {
