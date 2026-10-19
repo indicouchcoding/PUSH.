@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "launcher": {
+    "version": "0.1.0-alpha.1",
+    "url": "asset:PUSHLauncher.exe",
+    "sha256": "b290ca4130485e88c92bf4517af89fdc745a18f7ffe28f3cf7c026fd6344f758",
+    "size": 6271488
+  },
+  "runtime": {
+    "version": "0.1.0-alpha.1",
+    "url": "asset:PUSH.dll",
+    "sha256": "3ffae6308401710f8eebdab21977ba6e840b1214c9f52dd363d7768fa1077250",
+    "size": 29175808
+  },
+  "game": {
+    "app_id": 3354750,
+    "depot_id": 3354751,
+    "manifest_id": "4621099302092747785",
+    "build_id": "25414733",
+    "skate_sha256": "fbce74d5e28ef525dbba2cb4adbebc13405bdbd88f31bc940bca45e4ae88b8f9"
+  },
+  "depot_downloader": {
+    "version": "3.4.0",
+    "url": "https://github.com/SteamRE/DepotDownloader/releases/download/DepotDownloader_3.4.0/DepotDownloader-windows-x64.zip",
+    "sha256": "41c9e9f0df54b3ad02e67a11726756e5c73283bd7c2e1b04acfa5ae4c2ed3767",
+    "size": 33474005
+  },
+  "server": null
+}

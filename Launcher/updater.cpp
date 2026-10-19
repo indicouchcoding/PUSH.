@@ -366,10 +366,10 @@ Chosen release_to_use(bool prereleases) {
         return {*newest, prerelease_first};
     }
     if (full) return {*full, prerelease_first};
-    // No full release among the newest ten: GitHub's latest, as before.
-    text.clear();
-    http_get(repo + L"/releases/latest", 4 * 1024 * 1024, 8000, [&](const char* data, DWORD count) { text.append(data, count); });
-    return {Json::parse(text), prerelease_first};
+    // A new fork may publish pre-releases before its first stable release. Use the
+    // newest manifest-bearing release so a clean install can still reach Steam.
+    if (newest) return {*newest, prerelease_first};
+    fail("None of the newest releases has a launcher.json asset");
 }
 } // namespace
 
