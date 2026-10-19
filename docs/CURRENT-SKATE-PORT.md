@@ -27,6 +27,13 @@ identity. PUSH. starts its DX12 overlay without installing any address-based
 gameplay hooks from the previous executable. This is the safe runnable baseline
 for completing the native port feature by feature.
 
+This baseline is not yet a playable current-build release: it does not bypass
+EA services, complete the EA main-menu transition, or enable native gameplay,
+map, trainer, music, or cosmetic hooks. Those hooks are intentionally disabled
+until their current-build contracts are reviewed. The launcher can prove the
+current executable handoff and overlay startup, but it must not advertise that
+as successful in-game support.
+
 The first reproducible native-contract audit validates all 236 fingerprints
 against the old supported image, then searches the new image without executing
 either game binary.
