@@ -34,6 +34,30 @@ bool stage(logging::Channel channel, const char* name, bool ready, const std::st
     return ready;
 }
 }
+
+bool initialize_compatibility_bootstrap() {
+    using logging::Channel;
+    const auto hooks = hook_initialize();
+    if (hooks != HookOk && hooks != HookAlreadyInitialized) {
+        logging::log(logging::Level::error, Channel::hooks,
+            "Compatibility hook service failed: {} ({})", hook_status_string(hooks), static_cast<long>(hooks));
+        return false;
+    }
+    logging::write(logging::Level::info, Channel::hooks,
+        "Compatibility hook service ready (platform guards only).");
+
+    std::string error;
+    error.clear();
+    if (!stage(Channel::runtime, "EA app launch block", start_ea_app_block(error), error)) return false;
+    error.clear();
+    if (!stage(Channel::runtime, "EA online services block", start_ea_service_block(error), error)) return false;
+    error.clear();
+    // This hook is independent of Skate's image and prevents the game from
+    // handing control back to Steam's restart path after PUSH starts it.
+    if (!stage(Channel::runtime, "Steam restart guard", start_steam_restart_guard(error), error)) return false;
+    return true;
+}
+
 bool initialize_bootstrap(std::uintptr_t base) {
     if (!base) return false;
     using logging::Channel;

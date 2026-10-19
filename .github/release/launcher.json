@@ -9,8 +9,8 @@
   "runtime": {
     "version": "0.1.0-alpha.1",
     "url": "asset:PUSH.dll",
-    "sha256": "cc33602490f9268cd39a32f2b017c46aad81bf31c1a604cc355e7f18cc9d6276",
-    "size": 16650240
+    "sha256": "d930825fcf7508dcc9fd7d0b31c26370ebaf487350f3997a999be05ec793ac70",
+    "size": 16815616
   },
   "game": {
     "app_id": 3354750,

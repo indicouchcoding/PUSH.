@@ -213,6 +213,13 @@ extern "C" __declspec(dllexport) BOOL WINAPI DingoSDKDebugInitialize() {
         dingosdk::logging::write(dingosdk::logging::Level::info, dingosdk::logging::Channel::graphics,
             "Game graphics provider loaded: sl.interposer.dll.");
         if constexpr (!dingosdk::supported_build::native_contracts_complete) {
+            const bool compatibility_bootstrap = dingosdk::runtime::initialize_compatibility_bootstrap();
+            record("{\"event\":\"compatibility_bootstrap_initialized\",\"active\":" +
+                std::string(compatibility_bootstrap ? "true" : "false") + "}");
+            if (!compatibility_bootstrap)
+                dingosdk::logging::write(dingosdk::logging::Level::warning,
+                    dingosdk::logging::Channel::runtime,
+                    "Current-build platform guards are unavailable; continuing without EA-service blocking.");
             if (!DingoSDKOverlayStartV3(nullptr)) {
                 dingosdk::logging::write(dingosdk::logging::Level::error,
                     dingosdk::logging::Channel::graphics, "Compatibility overlay startup failed.");
