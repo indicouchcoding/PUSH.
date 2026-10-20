@@ -2,7 +2,7 @@
 Every session starts with a push.
 
 PUSH. is a community-driven fork of ReSkate, focused on open collaboration, extensibility, and giving skaters and creators a voice in the project's direction. Play offline, host lobbies or dedicated servers, and customize your experience with mods.
-Project status: PUSH. recognizes Steam build 25617022 and starts its address-independent graphics overlay in compatibility mode. Native gameplay hooks remain disabled until their contracts are reviewed against the new executable. In-game testing and a signed public release remain separate release gates.
+Project status: PUSH. recognizes Steam build 25617022, bypasses the unavailable EA session, and loads San Vansterdam through a fingerprint-guarded current-build startup path. The October 19, 2026 smoke test reached the settled playable client state. Advanced native map, trainer, music, cosmetic, and multiplayer hooks remain disabled until their current-build contracts are reviewed.
 
 Independent fan project: PUSH. is not affiliated with or endorsed by Electronic Arts, Full Circle, or the ReSkate maintainers. You need your own copy of skate. on Steam.
 
@@ -58,7 +58,8 @@ Getting started (inherited upstream procedure)
      Steam app, or use your username and password with Steam Guard.
    - On later runs it checks the game files and downloads only what is missing.
 4. Press PLAY.
-The inherited ReSkate implementation supports one game build at a time (Steam build 25414733).
+The current PUSH. compatibility target is Steam build 25617022. The launcher
+rejects a different executable hash instead of installing unreviewed native hooks.
 Linux (Proton)
 1. Install skate. with Steam, and put PUSHLauncher.exe and PUSH.dll in a new, empty folder
    of their own, for example ~/Games/PUSH (not Steam's skate. folder: the launcher refuses to
@@ -253,9 +254,9 @@ the content cache. A new game build means a new table and new pins. Most hooks a
 bytes they expect before touching them, so code from the wrong build is refused rather than patched.
 
 PUSH's independent port to the current Steam build is tracked in
-[docs/CURRENT-SKATE-PORT.md](docs/CURRENT-SKATE-PORT.md). The target is recorded
-separately from the active build until every native and asset contract passes
-review and in-game validation.
+[docs/CURRENT-SKATE-PORT.md](docs/CURRENT-SKATE-PORT.md). Playable local startup
+is active; advanced features are enabled only after their native and asset
+contracts pass review and in-game validation.
 Crash reports and privacy
 PUSH. does not have a crash-reporting endpoint configured. Minidump upload and performance timing upload
 are disabled by default, and local development builds do not send them to ReSkate infrastructure. Logs and
