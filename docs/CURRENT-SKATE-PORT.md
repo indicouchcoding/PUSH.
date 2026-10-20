@@ -23,16 +23,21 @@ The machine-readable record is
 ## Port status
 
 The launcher and runtime accept the target above by exact file hash and PE
-identity. PUSH. starts its DX12 overlay without installing any address-based
-gameplay hooks from the previous executable. This is the safe runnable baseline
-for completing the native port feature by feature.
+identity. PUSH. starts its DX12 overlay and installs only fingerprint-guarded
+current-build startup contracts. It does not install address-based gameplay
+hooks from the previous executable.
 
-This baseline is not yet a playable current-build release: it does not bypass
-EA services, complete the EA main-menu transition, or enable native gameplay,
-map, trainer, music, or cosmetic hooks. Those hooks are intentionally disabled
-until their current-build contracts are reviewed. The launcher can prove the
-current executable handoff and overlay startup, but it must not advertise that
-as successful in-game support.
+The current-build compatibility path now installs the fingerprint-guarded
+EA-service blocks, a selective `OnlineEnabled` offline gate, and the relocated
+native local-level request. The launcher bypasses the unavailable EA session and
+loads San Vansterdam through the game update thread.
+
+The local smoke test on October 19, 2026 completed the native client transition
+`0 -> 4 -> 6 -> 7 -> 8 -> 9 -> 10 -> 12 -> 13`; state `13` is the settled
+playable-world state. This establishes playable current-build startup. Native
+map selection, trainer, music, cosmetics, multiplayer, and the rest of the old
+build's feature hooks remain disabled until their current-build contracts are
+reviewed.
 
 The first reproducible native-contract audit validates all 236 fingerprints
 against the old supported image, then searches the new image without executing

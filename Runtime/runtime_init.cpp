@@ -213,7 +213,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI DingoSDKDebugInitialize() {
         dingosdk::logging::write(dingosdk::logging::Level::info, dingosdk::logging::Channel::graphics,
             "Game graphics provider loaded: sl.interposer.dll.");
         if constexpr (!dingosdk::supported_build::native_contracts_complete) {
-            const bool compatibility_bootstrap = dingosdk::runtime::initialize_compatibility_bootstrap();
+            const bool compatibility_bootstrap = dingosdk::runtime::initialize_compatibility_bootstrap(r.base);
             record("{\"event\":\"compatibility_bootstrap_initialized\",\"active\":" +
                 std::string(compatibility_bootstrap ? "true" : "false") + "}");
             if (!compatibility_bootstrap)
@@ -230,7 +230,7 @@ extern "C" __declspec(dllexport) BOOL WINAPI DingoSDKDebugInitialize() {
                 "\"native_load\":\"disabled_current_build_compatibility\"}");
             dingosdk::logging::write(dingosdk::logging::Level::warning,
                 dingosdk::logging::Channel::runtime,
-                "Current Steam build started in graphics compatibility mode; unported native gameplay features are disabled.");
+                "Current Steam build started in native startup compatibility mode; advanced gameplay features remain disabled.");
             startup_window.hand_over();
             return TRUE;
         }
